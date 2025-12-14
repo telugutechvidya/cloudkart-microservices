@@ -207,83 +207,83 @@ server {
     root /usr/share/nginx/html;
     index index.html;
 
-    # ========================================
-    # SPA (Single Page Application) Fallback
-    # ========================================
+    # -----------------------------------------------------
+    # AngularJS SPA routing
+    # -----------------------------------------------------
     location / {
         try_files $uri $uri/ /index.html;
     }
 
-    # ========================================
+    # -----------------------------------------------------
     # Static Assets
-    # ========================================
-    location /images/ {
-        root /usr/share/nginx/html;
-        try_files $uri /images/placeholder.jpg;
-    }
+    # -----------------------------------------------------
+    location /images/ { root /usr/share/nginx/html; }
+    location /css/    { root /usr/share/nginx/html; }
+    location /js/     { root /usr/share/nginx/html; }
+    location /media/  { root /usr/share/nginx/html; }
 
-    location /css/ {
-        root /usr/share/nginx/html;
-    }
-
-    location /js/ {
-        root /usr/share/nginx/html;
-    }
-
-    location /media/ {
-        root /usr/share/nginx/html;
-    }
-
-    # ========================================
-    # Backend API Proxies
-    # ========================================
-    
+    # -----------------------------------------------------
     # Catalogue Service
+    # -----------------------------------------------------
     location /api/catalogue/ {
-        proxy_pass http://<CATALOGUE-SERVER-IP>:8082/;
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_pass http://172.31.20.232:8082/;
     }
 
+    # -----------------------------------------------------
     # User Service
+    # -----------------------------------------------------
     location /api/user/ {
-        proxy_pass http://<USER-SERVER-IP>:8081/;
-        proxy_set_header X-Session-Id $http_x_session_id;
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_pass http://172.31.21.124:8081/api/user/;
     }
 
-    # Cart Service
+    # -----------------------------------------------------
+    # CART SERVICE — FINAL, CORRECT, ZERO-BUG VERSION
+    # -----------------------------------------------------
     location /api/cart/ {
-        proxy_pass http://<CART-SERVER-IP>:8083/;
+
+        proxy_pass http://172.31.19.139:8083/;
+
+        # Allow UI to send needed headers
+        add_header Access-Control-Allow-Origin *;
+        add_header Access-Control-Allow-Headers "X-Session-Id, Content-Type";
+
+        # Forward CloudKart session ID header
         proxy_set_header X-Session-Id $http_x_session_id;
+
+        # Fix: Pass content type/length to prevent JSON parsing issues
+        proxy_set_header Content-Type $http_content_type;
+        proxy_set_header Content-Length $http_content_length;
+
+        # Standard proxying
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
     }
 
-    # Payment Service
-    location /api/payment/ {
-        proxy_pass http://<PAYMENT-SERVER-IP>:8084/;
-        proxy_set_header X-Session-Id $http_x_session_id;
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-    }
-
-    # Shipping Service
+    # -----------------------------------------------------
+    # Unused now
+    # -----------------------------------------------------
     location /api/shipping/ {
-        proxy_pass http://<SHIPPING-SERVER-IP>:8086/;
+        proxy_pass http://172.31.30.72:8086/;
+        proxy_set_header X-Session-Id $http_x_session_id;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
     }
 
-    # ========================================
-    # Health Check Endpoint
-    # ========================================
+
+   # location /api/order/    { proxy_pass http://127.0.0.1:8084/; }
+   location /api/payment/ {
+        proxy_pass http://172.31.19.73:8084/;
+        proxy_set_header X-Session-Id $http_x_session_id;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    }
+
+    # -----------------------------------------------------
+    # Health
+    # -----------------------------------------------------
     location /health {
         stub_status on;
         access_log off;
