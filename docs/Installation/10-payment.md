@@ -193,6 +193,21 @@ EOF
 
 chown skillupworks:skillupworks /app/payment.ini
 ```
+### Payment Service Configuration
+
+Edit `/app/payment.ini`:
+```ini
+[uwsgi]
+socket = 0.0.0.0:8084  # ← Listen on all interfaces, not 127.0.0.1
+# ... rest of config
+```
+
+Restart service:
+```bash
+sudo systemctl restart payment.service
+```
+
+
 
 #### Create systemd Service with uWSGI
 
