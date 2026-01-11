@@ -1,6 +1,6 @@
 # 05 - User Service
 
-The User Service is a Node.js microservice that handles user authentication and management for the CloudKart application. It manages user registration, login, and session handling.
+The User Service is a Node.js microservice that handles user authentication and management for the skillupworks application. It manages user registration, login, and session handling.
 
 This service stores user data in **MongoDB** and manages sessions in **Redis** for fast session lookup and authentication.
 
@@ -80,20 +80,20 @@ v18.x.x
 ### 2. Create Application User
 
 ```bash
-# Create cloudkart user for running services
-useradd cloudkart
+# Create skillupworks user for running services
+useradd skillupworks
 
 # Create application directory
 mkdir -p /app
-chown cloudkart:cloudkart /app
+chown skillupworks:skillupworks /app
 ```
 
 ### 3. Download and Deploy User Service
 
 ```bash
 # Download from S3
-curl -o /tmp/cloudkart-user.zip \
-  https://myartifacts-telugutechvidya.s3.us-east-1.amazonaws.com/cloudkart-user.zip
+curl -o /tmp/skillupworks-user.zip \
+  https://skillupworks.s3.us-east-1.amazonaws.com/skillupworks-user.zip
 
 # Navigate to app directory
 cd /app
@@ -102,10 +102,10 @@ cd /app
 rm -rf /app/*
 
 # Extract the application
-unzip /tmp/cloudkart-user.zip
+unzip /tmp/skillupworks-user.zip
 
 # Set ownership
-chown -R cloudkart:cloudkart /app
+chown -R skillupworks:skillupworks /app
 
 # Verify files
 ls -la /app
@@ -127,8 +127,8 @@ ls -la /app
 # Navigate to app directory
 cd /app
 
-# Install dependencies as cloudkart user
-sudo -u cloudkart npm install
+# Install dependencies as skillupworks user
+sudo -u skillupworks npm install
 
 # Verify installation
 npm list --depth=0
@@ -156,11 +156,11 @@ Add the following configuration:
 
 ```ini
 [Unit]
-Description=CloudKart User Service
+Description=skillupworks User Service
 After=network.target
 
 [Service]
-User=cloudkart
+User=skillupworks
 WorkingDirectory=/app
 
 # Environment Variables
@@ -223,7 +223,7 @@ systemctl status user
 **Expected output:**
 
 ```
-● user.service - CloudKart User Service
+● user.service - skillupworks User Service
    Loaded: loaded (/etc/systemd/system/user.service; enabled)
    Active: active (running)
 ```
@@ -279,7 +279,7 @@ curl -X POST http://localhost:8081/register \
   -H "Content-Type: application/json" \
   -d '{
     "username": "testuser",
-    "email": "test@cloudkart.com",
+    "email": "test@skillupworks.com",
     "password": "Password123"
   }'
 ```
@@ -341,7 +341,7 @@ exit
 {
   "_id": ObjectId("..."),
   "username": "testuser",
-  "email": "test@cloudkart.com",
+  "email": "test@skillupworks.com",
   "password": "$2b$10$...",
   "created_at": ISODate("2024-12-14T10:00:00.000Z")
 }
@@ -422,7 +422,7 @@ cat /etc/systemd/system/user.service | grep -E "MONGO_URL|REDIS_URL"
 
 # 5. Missing npm packages
 cd /app
-sudo -u cloudkart npm install
+sudo -u skillupworks npm install
 
 # Restart service
 systemctl restart user
@@ -832,6 +832,6 @@ You have successfully:
 ✅ Verified registration and login APIs  
 ✅ Configured session-based authentication
 
-The User Service is now ready to handle user authentication for CloudKart.
+The User Service is now ready to handle user authentication for skillupworks.
 
 For issues or questions, refer to the [Troubleshooting Guide](#troubleshooting).
