@@ -1,6 +1,6 @@
 # 10 - Payment Service
 
-The Payment Service is a Python Flask microservice that handles payment processing for CloudKart. It integrates with Cart and User services, processes payments, and publishes order events to RabbitMQ for the Order Processor.
+The Payment Service is a Python Flask microservice that handles payment processing for skillupworks. It integrates with Cart and User services, processes payments, and publishes order events to RabbitMQ for the Order Processor.
 
 This service uses **Python 3.11**, **Flask** web framework, **uWSGI** application server, and **RabbitMQ** for message publishing.
 
@@ -81,24 +81,24 @@ pip 23.x.x
 ### 2. Create Application User
 
 ```bash
-# Create cloudkart user for running services
-useradd cloudkart
+# Create skillupworks user for running services
+useradd skillupworks
 
 # Create application directory
 mkdir -p /app
-chown cloudkart:cloudkart /app
+chown skillupworks:skillupworks /app
 
 # Create log directory
-mkdir -p /var/log/cloudkart
-chown cloudkart:cloudkart /var/log/cloudkart
+mkdir -p /var/log/skillupworks
+chown skillupworks:skillupworks /var/log/skillupworks
 ```
 
 ### 3. Download and Deploy Payment Service
 
 ```bash
 # Download from S3
-curl -o /tmp/cloudkart-payment.zip \
-  https://myartifacts-telugutechvidya.s3.us-east-1.amazonaws.com/cloudkart-payment.zip
+curl -o /tmp/skillupworks-payment.zip \
+  https://skillupworks.s3.us-east-1.amazonaws.com/skillupworks-payment.zip
 
 # Navigate to app directory
 cd /app
@@ -107,10 +107,10 @@ cd /app
 rm -rf /app/*
 
 # Extract the application
-unzip /tmp/cloudkart-payment.zip
+unzip /tmp/skillupworks-payment.zip
 
 # Set ownership
-chown -R cloudkart:cloudkart /app
+chown -R skillupworks:skillupworks /app
 
 # Verify files
 ls -la /app
@@ -134,8 +134,8 @@ cd /app
 # Upgrade pip first
 pip3.11 install --upgrade pip
 
-# Install dependencies as cloudkart user
-sudo -u cloudkart pip3.11 install -r requirements.txt
+# Install dependencies as skillupworks user
+sudo -u skillupworks pip3.11 install -r requirements.txt
 
 # Install uWSGI (application server)
 pip3.11 install uwsgi
@@ -191,7 +191,7 @@ vacuum = true
 die-on-term = true
 EOF
 
-chown cloudkart:cloudkart /app/payment.ini
+chown skillupworks:skillupworks /app/payment.ini
 ```
 
 #### Create systemd Service with uWSGI
@@ -205,11 +205,11 @@ Add the following configuration:
 
 ```ini
 [Unit]
-Description=CloudKart Payment Service
+Description=skillupworks Payment Service
 After=network.target
 
 [Service]
-User=cloudkart
+User=skillupworks
 WorkingDirectory=/app
 
 # Environment Variables
@@ -218,8 +218,8 @@ Environment=CART_PORT=8083
 Environment=USER_HOST=<USER-SERVER-IP>
 Environment=USER_PORT=8081
 Environment=AMQP_HOST=<RABBITMQ-SERVER-IP>
-Environment=AMQP_USER=cloudkart
-Environment=AMQP_PASS=CloudKart@123
+Environment=AMQP_USER=skillupworks
+Environment=AMQP_PASS=skillupworks@123
 Environment=PAYMENT_PORT=8084
 Environment=PAYMENT_GATEWAY=https://razorpay.com/
 
@@ -246,11 +246,11 @@ If uWSGI causes issues, run Flask directly:
 # Create service file
 cat > /etc/systemd/system/payment.service << 'EOF'
 [Unit]
-Description=CloudKart Payment Service
+Description=skillupworks Payment Service
 After=network.target
 
 [Service]
-User=cloudkart
+User=skillupworks
 WorkingDirectory=/app
 
 # Environment Variables
@@ -259,8 +259,8 @@ Environment=CART_PORT=8083
 Environment=USER_HOST=<USER-SERVER-IP>
 Environment=USER_PORT=8081
 Environment=AMQP_HOST=<RABBITMQ-SERVER-IP>
-Environment=AMQP_USER=cloudkart
-Environment=AMQP_PASS=CloudKart@123
+Environment=AMQP_USER=skillupworks
+Environment=AMQP_PASS=skillupworks@123
 Environment=PAYMENT_PORT=8084
 Environment=PAYMENT_GATEWAY=https://razorpay.com/
 
@@ -323,7 +323,7 @@ systemctl status payment
 **Expected output:**
 
 ```
-● payment.service - CloudKart Payment Service
+● payment.service - skillupworks Payment Service
    Loaded: loaded (/etc/systemd/system/payment.service; enabled)
    Active: active (running)
 ```
@@ -556,7 +556,7 @@ telnet <RABBITMQ-IP> 5672
 
 # 2. Verify credentials
 rabbitmqctl list_users
-# Should show: cloudkart []
+# Should show: skillupworks []
 
 # 3. Check AMQP settings in service file
 grep -E "AMQP_HOST|AMQP_USER|AMQP_PASS" /etc/systemd/system/payment.service
@@ -856,6 +856,6 @@ You have successfully:
 ✅ Started Payment Service on port 8084  
 ✅ Verified health, metrics, and payment APIs  
 
-The Payment Service is now ready to process payments and publish order events for CloudKart.
+The Payment Service is now ready to process payments and publish order events for skillupworks.
 
 For issues or questions, refer to the [Troubleshooting Guide](#troubleshooting).
