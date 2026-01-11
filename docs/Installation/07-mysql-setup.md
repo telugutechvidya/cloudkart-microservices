@@ -1,6 +1,6 @@
 # 07 - MySQL Setup
 
-MySQL 8.4 is used as the database for the **Shipping Service** in CloudKart. It stores city data (948,000+ cities worldwide) for shipping cost calculations.
+MySQL 8.4 is used as the database for the **Shipping Service** in skillupworks. It stores city data (948,000+ cities worldwide) for shipping cost calculations.
 
 This guide covers MySQL Server installation, configuration for remote access, and schema setup.
 
@@ -104,8 +104,8 @@ For quick setup, use this automated script:
 cat > /tmp/mysql-setup.sh << 'EOF'
 #!/bin/bash
 
-# MySQL Installation for CloudKart - Database Server Only
-MYSQL_ROOT_PASSWORD="CloudKart@1990"
+# MySQL Installation for skillupworks - Database Server Only
+MYSQL_ROOT_PASSWORD="skillupworks@1990"
 
 echo "=== Installing MySQL Server ==="
 dnf module enable mysql:8.4 -y
@@ -206,7 +206,7 @@ systemctl start mysqld
 # Set root password
 mysql -u root << EOF
 FLUSH PRIVILEGES;
-ALTER USER 'root'@'localhost' IDENTIFIED BY 'CloudKart@1990';
+ALTER USER 'root'@'localhost' IDENTIFIED BY 'skillupworks@1990';
 FLUSH PRIVILEGES;
 EOF
 
@@ -221,8 +221,8 @@ systemctl restart mysqld
 
 ```bash
 # Allow root access from any host
-mysql -u root -pCloudKart@1990 << EOF
-CREATE USER IF NOT EXISTS 'root'@'%' IDENTIFIED BY 'CloudKart@1990';
+mysql -u root -pskillupworks@1990 << EOF
+CREATE USER IF NOT EXISTS 'root'@'%' IDENTIFIED BY 'skillupworks@1990';
 GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' WITH GRANT OPTION;
 FLUSH PRIVILEGES;
 EOF
@@ -272,10 +272,10 @@ ss -tulpn | grep 3306
 
 ```bash
 # Connect to MySQL locally
-mysql -u root -pCloudKart@1990
+mysql -u root -pskillupworks@1990
 
 # Run test query
-mysql -u root -pCloudKart@1990 -e "SELECT VERSION();"
+mysql -u root -pskillupworks@1990 -e "SELECT VERSION();"
 ```
 
 **Expected output:**
@@ -298,7 +298,7 @@ dnf module enable mysql:8.4 -y
 dnf install mysql -y
 
 # Test remote connection
-mysql -h <MYSQL-SERVER-IP> -u root -pCloudKart@1990 -e "SHOW DATABASES;"
+mysql -h <MYSQL-SERVER-IP> -u root -pskillupworks@1990 -e "SHOW DATABASES;"
 ```
 
 **Expected output:**
@@ -321,7 +321,7 @@ mysql -h <MYSQL-SERVER-IP> -u root -pCloudKart@1990 -e "SHOW DATABASES;"
 grep bind-address /etc/my.cnf
 
 # Check user permissions
-mysql -u root -pCloudKart@1990 -e "SELECT user, host FROM mysql.user WHERE user='root';"
+mysql -u root -pskillupworks@1990 -e "SELECT user, host FROM mysql.user WHERE user='root';"
 ```
 
 **Expected output:**
@@ -342,7 +342,7 @@ mysql -u root -pCloudKart@1990 -e "SELECT user, host FROM mysql.user WHERE user=
 **Symptoms:**
 
 ```bash
-mysql_secure_installation --set-root-pass CloudKart@1990
+mysql_secure_installation --set-root-pass skillupworks@1990
 # Error: Access denied or doesn't work
 ```
 
@@ -374,7 +374,7 @@ systemctl start mysqld
 
 mysql -u root << EOF
 FLUSH PRIVILEGES;
-ALTER USER 'root'@'localhost' IDENTIFIED BY 'CloudKart@1990';
+ALTER USER 'root'@'localhost' IDENTIFIED BY 'skillupworks@1990';
 FLUSH PRIVILEGES;
 EOF
 
@@ -387,7 +387,7 @@ systemctl restart mysqld
 **Symptoms:**
 
 ```bash
-mysql -h <MYSQL-IP> -u root -pCloudKart@1990
+mysql -h <MYSQL-IP> -u root -pskillupworks@1990
 # ERROR 2003: Can't connect to MySQL server
 ```
 
@@ -406,7 +406,7 @@ grep bind-address /etc/my.cnf
 firewall-cmd --list-ports | grep 3306
 
 # 4. Verify user has remote access
-mysql -u root -pCloudKart@1990 -e "SELECT user, host FROM mysql.user WHERE user='root';"
+mysql -u root -pskillupworks@1990 -e "SELECT user, host FROM mysql.user WHERE user='root';"
 # Should show root@%
 
 # 5. If bind-address is wrong, fix it:
@@ -519,7 +519,7 @@ After MySQL is installed, the Shipping Service will load its schema:
 
 ```bash
 # From Shipping Service server
-mysql -h <MYSQL-SERVER-IP> -u root -pCloudKart@1990 < /app/schema/shipping.sql
+mysql -h <MYSQL-SERVER-IP> -u root -pskillupworks@1990 < /app/schema/shipping.sql
 ```
 
 This creates:
@@ -536,13 +536,13 @@ systemctl restart mysqld
 systemctl status mysqld
 
 # Connect Locally
-mysql -u root -pCloudKart@1990
+mysql -u root -pskillupworks@1990
 
 # Connect Remotely
-mysql -h <MYSQL-IP> -u root -pCloudKart@1990
+mysql -h <MYSQL-IP> -u root -pskillupworks@1990
 
 # Test Connection
-mysql -h <MYSQL-IP> -u root -pCloudKart@1990 -e "SHOW DATABASES;"
+mysql -h <MYSQL-IP> -u root -pskillupworks@1990 -e "SHOW DATABASES;"
 
 # Check Logs
 tail -f /var/log/mysqld.log
@@ -551,13 +551,13 @@ tail -f /var/log/mysqld.log
 ss -tulpn | grep 3306
 
 # Check Users
-mysql -u root -pCloudKart@1990 -e "SELECT user, host FROM mysql.user;"
+mysql -u root -pskillupworks@1990 -e "SELECT user, host FROM mysql.user;"
 
 # Reset Root Password (if needed)
 systemctl stop mysqld
 echo -e "[mysqld]\nskip-grant-tables" >> /etc/my.cnf
 systemctl start mysqld
-mysql -u root -e "ALTER USER 'root'@'localhost' IDENTIFIED BY 'CloudKart@1990'; FLUSH PRIVILEGES;"
+mysql -u root -e "ALTER USER 'root'@'localhost' IDENTIFIED BY 'skillupworks@1990'; FLUSH PRIVILEGES;"
 sed -i '/skip-grant-tables/d' /etc/my.cnf
 systemctl restart mysqld
 ```
@@ -586,7 +586,7 @@ systemctl restart mysqld
 
 ## Security Best Practices
 
-1. **Strong Password**: Use strong password (not CloudKart@1990 in production)
+1. **Strong Password**: Use strong password (not skillupworks@1990 in production)
 2. **Limited Remote Access**: In production, restrict root@'%' to specific IPs
 3. **Dedicated User**: Create dedicated user for Shipping Service
 4. **Firewall**: Only allow MySQL port from application servers
@@ -597,14 +597,14 @@ systemctl restart mysqld
 
 ```bash
 # Create dedicated shipping user (recommended for production)
-mysql -u root -pCloudKart@1990 << EOF
+mysql -u root -pskillupworks@1990 << EOF
 CREATE USER 'shipping'@'<SHIPPING-SERVER-IP>' IDENTIFIED BY 'SecurePassword123';
 GRANT ALL PRIVILEGES ON cities.* TO 'shipping'@'<SHIPPING-SERVER-IP>';
 FLUSH PRIVILEGES;
 EOF
 
 # Restrict root access (production)
-mysql -u root -pCloudKart@1990 << EOF
+mysql -u root -pskillupworks@1990 << EOF
 DELETE FROM mysql.user WHERE user='root' AND host='%';
 FLUSH PRIVILEGES;
 EOF
@@ -623,7 +623,7 @@ After MySQL is running:
 You have successfully:
 
 ✅ Installed MySQL 8.4 Server  
-✅ Set root password to CloudKart@1990  
+✅ Set root password to skillupworks@1990  
 ✅ Configured remote access (root@%)  
 ✅ Configured bind-address for remote connections  
 ✅ Opened firewall port 3306  
@@ -640,7 +640,7 @@ For issues or questions, refer to the [Troubleshooting Guide](#troubleshooting).
 **Expected (Simple) Method:**
 
 ```bash
-mysql_secure_installation --set-root-pass CloudKart@1990
+mysql_secure_installation --set-root-pass skillupworks@1990
 ```
 
 **Why it didn't work:**
