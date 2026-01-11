@@ -35,7 +35,7 @@ Payment Service (8084)
     └── Publishes payment events
          ↓
 RabbitMQ (5672)
-    ├── Exchange: cloudkart
+    ├── Exchange: skillupworks
     └── Queue: order-processing
          ↓
          └── Consumed by
@@ -83,24 +83,24 @@ pip 23.x.x
 ### 2. Create Application User
 
 ```bash
-# Create cloudkart user (if not already exists)
-id cloudkart || useradd cloudkart
+# Create skillupworks user (if not already exists)
+id skillupworks || useradd skillupworks
 
 # Create application directory
 mkdir -p /app
-chown cloudkart:cloudkart /app
+chown skillupworks:skillupworks /app
 
 # Create log directory
-mkdir -p /var/log/cloudkart
-chown cloudkart:cloudkart /var/log/cloudkart
+mkdir -p /var/log/skillupworks
+chown skillupworks:skillupworks /var/log/skillupworks
 ```
 
 ### 3. Download and Deploy Order Processor
 
 ```bash
 # Download from S3
-curl -o /tmp/cloudkart-order-processor.zip \
-  https://myartifacts-telugutechvidya.s3.us-east-1.amazonaws.com/cloudkart-order-processor.zip
+curl -o /tmp/skillupworks-order-processor.zip \
+  https://myartifacts-telugutechvidya.s3.us-east-1.amazonaws.com/skillupworks-order-processor.zip
 
 # Navigate to app directory
 cd /app
@@ -109,16 +109,16 @@ cd /app
 rm -rf /app/*
 
 # Extract the application
-unzip /tmp/cloudkart-order-processor.zip
+unzip /tmp/skillupworks-order-processor.zip
 
 # If extracted into subfolder, move files up
-if [ -d "cloudkart-order-processor" ]; then
-  mv cloudkart-order-processor/* .
-  rmdir cloudkart-order-processor
+if [ -d "skillupworks-order-processor" ]; then
+  mv skillupworks-order-processor/* .
+  rmdir skillupworks-order-processor
 fi
 
 # Set ownership
-chown -R cloudkart:cloudkart /app
+chown -R skillupworks:skillupworks /app
 
 # Verify files
 ls -la /app
@@ -141,8 +141,8 @@ cd /app
 # Upgrade pip
 pip3.11 install --upgrade pip
 
-# Install dependencies as cloudkart user
-sudo -u cloudkart pip3.11 install -r requirements.txt
+# Install dependencies as skillupworks user
+sudo -u skillupworks pip3.11 install -r requirements.txt
 
 # Verify installation
 pip3.11 list | grep pika
@@ -166,17 +166,17 @@ Add the following configuration:
 
 ```ini
 [Unit]
-Description=CloudKart Order Processing Service
+Description=skillupworks Order Processing Service
 After=network.target
 
 [Service]
-User=cloudkart
+User=skillupworks
 WorkingDirectory=/app
 
 # Environment Variables
 Environment=RABBITMQ_HOST=<RABBITMQ-SERVER-IP>
-Environment=RABBITMQ_USER=cloudkart
-Environment=RABBITMQ_PASS=CloudKart@123
+Environment=RABBITMQ_USER=skillupworks
+Environment=RABBITMQ_PASS=skillupworks@123
 
 ExecStart=/usr/bin/python3.11 /app/order_processor.py
 
@@ -228,7 +228,7 @@ systemctl status order-processor
 **Expected output:**
 
 ```
-● order-processor.service - CloudKart Order Processing Service
+● order-processor.service - skillupworks Order Processing Service
    Loaded: loaded (/etc/systemd/system/order-processor.service; enabled)
    Active: active (running)
 ```
@@ -248,7 +248,7 @@ journalctl -u order-processor -f
 **Expected log output:**
 
 ```
-CloudKart Order Processing Service Starting...
+skillupworks Order Processing Service Starting...
 Connected to RabbitMQ at 172.31.26.127
 Listening on queue: order-processing
 ✓ Ready to process orders! Waiting for messages...
@@ -271,7 +271,7 @@ rabbitmqctl list_connections
 ```
 Listing connections ...
 user            peer_addr                       peer_port
-cloudkart       172.31.x.x:xxxxx               xxxxx
+skillupworks       172.31.x.x:xxxxx               xxxxx
 ```
 
 ### 3. Check Queue Status
@@ -295,9 +295,9 @@ order-processing    0           1
 
 ### 4. Test Complete Order Flow
 
-#### Make a Purchase on CloudKart
+#### Make a Purchase on skillupworks
 
-1. Go to CloudKart website
+1. Go to skillupworks website
 2. Add items to cart
 3. Complete checkout
 4. Process payment
@@ -374,7 +374,7 @@ pip3.11 install -r /app/requirements.txt
 ls -la /app/order_processor.py
 
 # 4. Permission issues
-chown cloudkart:cloudkart /app/order_processor.py
+chown skillupworks:skillupworks /app/order_processor.py
 
 # Restart service
 systemctl restart order-processor
@@ -401,7 +401,7 @@ systemctl status rabbitmq-server
 
 # 3. Verify credentials
 rabbitmqctl list_users
-# Should show: cloudkart []
+# Should show: skillupworks []
 
 # 4. Check RABBITMQ_HOST in service file
 grep RABBITMQ_HOST /etc/systemd/system/order-processor.service
@@ -412,7 +412,7 @@ firewall-cmd --list-ports | grep 5672
 
 # 6. Verify user permissions
 rabbitmqctl list_permissions -p /
-# Should show: cloudkart .* .* .*
+# Should show: skillupworks .* .* .*
 
 # 7. Restart order-processor
 systemctl restart order-processor
@@ -423,7 +423,7 @@ systemctl restart order-processor
 **Symptoms:**
 
 ```
-Error: Access refused for user 'cloudkart'
+Error: Access refused for user 'skillupworks'
 Error: Invalid credentials
 ```
 
@@ -434,8 +434,8 @@ Error: Invalid credentials
 rabbitmqctl list_users
 
 # 2. If user missing, create it
-rabbitmqctl add_user cloudkart CloudKart@123
-rabbitmqctl set_permissions -p / cloudkart ".*" ".*" ".*"
+rabbitmqctl add_user skillupworks skillupworks@123
+rabbitmqctl set_permissions -p / skillupworks ".*" ".*" ".*"
 
 # 3. Check credentials in service file
 grep -E "RABBITMQ_USER|RABBITMQ_PASS" /etc/systemd/system/order-processor.service
@@ -465,7 +465,7 @@ The queue should be automatically created by the order processor when it starts.
 # Durable: Yes
 
 # Or via CLI
-rabbitmqctl eval 'rabbit_amqqueue:declare({resource, <<"/">>, queue, <<"order-processing">>}, true, false, [], none, <<"cloudkart">>).'
+rabbitmqctl eval 'rabbit_amqqueue:declare({resource, <<"/">>, queue, <<"order-processing">>}, true, false, [], none, <<"skillupworks">>).'
 
 # Restart order-processor
 systemctl restart order-processor
@@ -697,7 +697,7 @@ For failed messages, configure a dead letter queue:
 
 ```bash
 # Create DLQ in RabbitMQ
-rabbitmqctl eval 'rabbit_amqqueue:declare({resource, <<"/">>, queue, <<"order-processing-dlq">>}, true, false, [], none, <<"cloudkart">>).'
+rabbitmqctl eval 'rabbit_amqqueue:declare({resource, <<"/">>, queue, <<"order-processing-dlq">>}, true, false, [], none, <<"skillupworks">>).'
 ```
 
 ### Message Retry Logic
@@ -724,7 +724,7 @@ You have successfully:
 ✅ Verified message consumption from order-processing queue  
 ✅ Tested complete payment-to-order flow  
 
-The Order Processor is now ready to process orders asynchronously for CloudKart.
+The Order Processor is now ready to process orders asynchronously for skillupworks.
 
 For issues or questions, refer to the [Troubleshooting Guide](#troubleshooting).
 
@@ -732,7 +732,7 @@ For issues or questions, refer to the [Troubleshooting Guide](#troubleshooting).
 
 ## 🎉 Congratulations!
 
-You have successfully completed the installation and configuration of **ALL 11 CloudKart microservices**:
+You have successfully completed the installation and configuration of **ALL 11 skillupworks microservices**:
 
 1. ✅ Frontend (Nginx + AngularJS)
 2. ✅ MongoDB
@@ -746,7 +746,7 @@ You have successfully completed the installation and configuration of **ALL 11 C
 10. ✅ Payment Service (Python)
 11. ✅ Order Processor (Python)
 
-**Your CloudKart e-commerce platform is now fully operational!** 🚀
+**Your skillupworks e-commerce platform is now fully operational!** 🚀
 
 ---
 
