@@ -1,6 +1,6 @@
 # 04 - Redis Setup
 
-Redis is an in-memory data store used by CloudKart for **session management** and **shopping cart storage**. It provides high-speed access to user sessions and cart data, ensuring fast response times for these critical operations.
+Redis is an in-memory data store used by skillupworks for **session management** and **shopping cart storage**. It provides high-speed access to user sessions and cart data, ensuring fast response times for these critical operations.
 
 This guide covers installing Redis 7.x on RHEL 9 and configuring it for network access from application servers.
 
@@ -238,11 +238,11 @@ PING
 # Output: PONG
 
 # Set a test key
-SET test "CloudKart"
+SET test "skillupworks"
 
 # Get the key
 GET test
-# Output: "CloudKart"
+# Output: "skillupworks"
 
 # Check Redis info
 INFO server
@@ -309,7 +309,7 @@ exit
 
 ---
 
-## Redis for CloudKart Services
+## Redis for skillupworks Services
 
 ### User Service - Session Storage
 
@@ -500,7 +500,7 @@ redis-cli SETEX session:test123 3600 "value"
 
 ## Performance Tuning
 
-### Recommended Settings for CloudKart
+### Recommended Settings for skillupworks
 
 ```bash
 # Edit Redis config
@@ -692,7 +692,7 @@ You have successfully:
 - ✅ Enabled firewall rules for port 6379
 - ✅ Verified Redis is accessible from application servers
 
-Redis is now ready to provide high-speed session and cart storage for CloudKart services.
+Redis is now ready to provide high-speed session and cart storage for skillupworks services.
 
 ---
 
