@@ -1,6 +1,6 @@
 # 06 - Cart Service
 
-The Cart Service is a Node.js microservice that manages shopping cart functionality for the CloudKart application. It handles adding items to cart, updating quantities, removing items, and calculating totals.
+The Cart Service is a Node.js microservice that manages shopping cart functionality for the skillupworks application. It handles adding items to cart, updating quantities, removing items, and calculating totals.
 
 This service stores cart data in **Redis** for fast access and communicates with the **Catalogue Service** to fetch product details.
 
@@ -82,20 +82,20 @@ v18.x.x
 ### 2. Create Application User
 
 ```bash
-# Create cloudkart user for running services
-useradd cloudkart
+# Create skillupworks user for running services
+useradd skillupworks
 
 # Create application directory
 mkdir -p /app
-chown cloudkart:cloudkart /app
+chown skillupworks:skillupworks /app
 ```
 
 ### 3. Download and Deploy Cart Service
 
 ```bash
 # Download from S3
-curl -o /tmp/cloudkart-cart.zip \
-  https://myartifacts-telugutechvidya.s3.us-east-1.amazonaws.com/cloudkart-cart.zip
+curl -o /tmp/skillupworks-cart.zip \
+  https://skillupworks.s3.us-east-1.amazonaws.com/skillupworks-cart.zip
 
 # Navigate to app directory
 cd /app
@@ -104,10 +104,10 @@ cd /app
 rm -rf /app/*
 
 # Extract the application
-unzip /tmp/cloudkart-cart.zip
+unzip /tmp/skillupworks-cart.zip
 
 # Set ownership
-chown -R cloudkart:cloudkart /app
+chown -R skillupworks:skillupworks /app
 
 # Verify files
 ls -la /app
@@ -127,8 +127,8 @@ ls -la /app
 # Navigate to app directory
 cd /app
 
-# Install dependencies as cloudkart user
-sudo -u cloudkart npm install
+# Install dependencies as skillupworks user
+sudo -u skillupworks npm install
 
 # Verify installation
 npm list --depth=0
@@ -155,11 +155,11 @@ Add the following configuration:
 
 ```ini
 [Unit]
-Description=CloudKart Cart Service
+Description=skillupworks Cart Service
 After=network.target
 
 [Service]
-User=cloudkart
+User=skillupworks
 WorkingDirectory=/app
 
 # Environment Variables
@@ -221,7 +221,7 @@ systemctl status cart
 **Expected output:**
 
 ```
-● cart.service - CloudKart Cart Service
+● cart.service - skillupworks Cart Service
    Loaded: loaded (/etc/systemd/system/cart.service; enabled)
    Active: active (running)
 ```
@@ -442,7 +442,7 @@ cat /etc/systemd/system/cart.service | grep -E "REDIS_HOST|CATALOGUE_HOST"
 
 # 5. Missing npm packages
 cd /app
-sudo -u cloudkart npm install
+sudo -u skillupworks npm install
 
 # Restart service
 systemctl restart cart
@@ -977,6 +977,6 @@ You have successfully:
 ✅ Verified add, update, remove, and get cart APIs  
 ✅ Configured session-based cart management
 
-The Cart Service is now ready to manage shopping carts for CloudKart.
+The Cart Service is now ready to manage shopping carts for skillupworks.
 
 For issues or questions, refer to the [Troubleshooting Guide](#troubleshooting).
