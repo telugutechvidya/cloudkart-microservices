@@ -136,7 +136,7 @@ On the frontend server:
 ```bash
 # Download the skillupworks frontend ZIP from S3
 curl -o /tmp/skillupworks-frontend.zip \
-  https://myartifacts-telugutechvidya.s3.us-east-1.amazonaws.com/skillupworks-frontend.zip
+  https://skillupworks.s3.us-east-1.amazonaws.com/skillupworks-frontend.zip
 ```
 
 > 🔁 **Note:** If using a different region, adjust the URL:
