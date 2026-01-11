@@ -76,20 +76,20 @@ Apache Maven 3.x.x
 ### 2. Create Application User
 
 ```bash
-# Create cloudkart user for running services
-useradd cloudkart
+# Create skillupworks user for running services
+useradd skillupworks
 
 # Create application directory
 mkdir -p /app
-chown cloudkart:cloudkart /app
+chown skillupworks:skillupworks /app
 ```
 
 ### 3. Download and Deploy Shipping Service
 
 ```bash
 # Download from S3
-curl -o /tmp/cloudkart-shipping.zip \
-  https://myartifacts-telugutechvidya.s3.us-east-1.amazonaws.com/cloudkart-shipping.zip
+curl -o /tmp/skillupworks-shipping.zip \
+  https://skillupworks.s3.us-east-1.amazonaws.com/skillupworks-shipping.zip
 
 # Navigate to app directory
 cd /app
@@ -98,10 +98,10 @@ cd /app
 rm -rf /app/*
 
 # Extract the application
-unzip /tmp/cloudkart-shipping.zip
+unzip /tmp/skillupworks-shipping.zip
 
 # Set ownership
-chown -R cloudkart:cloudkart /app
+chown -R skillupworks:skillupworks /app
 
 # Verify files
 ls -la /app
@@ -116,7 +116,7 @@ ls -la /app
 │   └── main/
 │       └── java/
 │           └── com/
-│               └── cloudkart/
+│               └── skillupworks/
 │                   └── shipping/
 │                       ├── Application.java
 │                       ├── Controller.java
@@ -133,11 +133,11 @@ ls -la /app
 cd /app
 
 # Build the application (skip tests for faster build)
-sudo -u cloudkart mvn clean package -DskipTests
+sudo -u skillupworks mvn clean package -DskipTests
 
 # Rename the JAR file
 mv target/shipping-1.0.jar shipping.jar
-chown cloudkart:cloudkart shipping.jar
+chown skillupworks:skillupworks shipping.jar
 
 # Verify JAR was created
 ls -lh shipping.jar
@@ -146,7 +146,7 @@ ls -lh shipping.jar
 **Expected output:**
 
 ```
--rw-r--r-- 1 cloudkart cloudkart 25M Dec 14 10:00 shipping.jar
+-rw-r--r-- 1 skillupworks skillupworks 25M Dec 14 10:00 shipping.jar
 ```
 
 ### 5. Install MySQL Client
@@ -185,7 +185,7 @@ cat /app/schema/shipping.sql | grep -n "IDENTIFIED BY"
 # GRANT ALL ON cities.* TO 'shipping'@'%' IDENTIFIED BY 'password';
 
 # New MySQL 8.4 syntax:
-sed -i "26s/.*/CREATE USER IF NOT EXISTS 'shipping'@'%' IDENTIFIED BY 'CloudKart@1990';\nGRANT ALL PRIVILEGES ON cities.* TO 'shipping'@'%';\nFLUSH PRIVILEGES;/" /app/schema/shipping.sql
+sed -i "26s/.*/CREATE USER IF NOT EXISTS 'shipping'@'%' IDENTIFIED BY 'skillupworks@1990';\nGRANT ALL PRIVILEGES ON cities.* TO 'shipping'@'%';\nFLUSH PRIVILEGES;/" /app/schema/shipping.sql
 
 # Verify the fix
 sed -n '24,30p' /app/schema/shipping.sql
@@ -195,7 +195,7 @@ sed -n '24,30p' /app/schema/shipping.sql
 
 ```bash
 # Load schema from shipping server
-mysql -h <MYSQL-SERVER-IP> -u root -pCloudKart@1990 < /app/schema/shipping.sql
+mysql -h <MYSQL-SERVER-IP> -u root -pskillupworks@1990 < /app/schema/shipping.sql
 
 # This will:
 # - Create database: cities
@@ -210,16 +210,16 @@ mysql -h <MYSQL-SERVER-IP> -u root -pCloudKart@1990 < /app/schema/shipping.sql
 
 ```bash
 # Check databases
-mysql -h <MYSQL-SERVER-IP> -u root -pCloudKart@1990 -e "SHOW DATABASES;" 2>/dev/null
+mysql -h <MYSQL-SERVER-IP> -u root -pskillupworks@1990 -e "SHOW DATABASES;" 2>/dev/null
 
 # Check tables
-mysql -h <MYSQL-SERVER-IP> -u root -pCloudKart@1990 -e "USE cities; SHOW TABLES;" 2>/dev/null
+mysql -h <MYSQL-SERVER-IP> -u root -pskillupworks@1990 -e "USE cities; SHOW TABLES;" 2>/dev/null
 
 # Count cities
-mysql -h <MYSQL-SERVER-IP> -u root -pCloudKart@1990 -e "USE cities; SELECT COUNT(*) FROM cities;" 2>/dev/null
+mysql -h <MYSQL-SERVER-IP> -u root -pskillupworks@1990 -e "USE cities; SELECT COUNT(*) FROM cities;" 2>/dev/null
 
 # Sample data
-mysql -h <MYSQL-SERVER-IP> -u root -pCloudKart@1990 -e "USE cities; SELECT * FROM cities LIMIT 5;" 2>/dev/null
+mysql -h <MYSQL-SERVER-IP> -u root -pskillupworks@1990 -e "USE cities; SELECT * FROM cities LIMIT 5;" 2>/dev/null
 ```
 
 **Expected output:**
@@ -251,23 +251,23 @@ Add the following configuration:
 
 ```ini
 [Unit]
-Description=CloudKart Shipping Service
+Description=skillupworks Shipping Service
 After=network.target
 
 [Service]
-User=cloudkart
+User=skillupworks
 WorkingDirectory=/app
 
 # ============================
 # Environment Variables
 # ============================
-# Cart Service (CloudKart Cart port = 8083)
+# Cart Service (skillupworks Cart port = 8083)
 Environment=CART_ENDPOINT=<CART-SERVER-IP>:8083
 
 # MySQL Database
 Environment=DB_HOST=<MYSQL-SERVER-IP>
 Environment=DB_USER=root
-Environment=DB_PASS=CloudKart@1990
+Environment=DB_PASS=skillupworks@1990
 
 # Shipping App Port
 Environment=SHIPPING_PORT=8086
@@ -329,7 +329,7 @@ systemctl status shipping
 **Expected output:**
 
 ```
-● shipping.service - CloudKart Shipping Service
+● shipping.service - skillupworks Shipping Service
    Loaded: loaded (/etc/systemd/system/shipping.service; enabled)
    Active: active (running)
 ```
@@ -527,10 +527,10 @@ Error in logs: Unable to connect to database
 
 ```bash
 # 1. Test MySQL connectivity
-mysql -h <MYSQL-IP> -u root -pCloudKart@1990 -e "SELECT 1;"
+mysql -h <MYSQL-IP> -u root -pskillupworks@1990 -e "SELECT 1;"
 
 # 2. Check if cities database exists
-mysql -h <MYSQL-IP> -u root -pCloudKart@1990 -e "SHOW DATABASES;" | grep cities
+mysql -h <MYSQL-IP> -u root -pskillupworks@1990 -e "SHOW DATABASES;" | grep cities
 
 # 3. Verify DB_HOST in service file
 grep DB_HOST /etc/systemd/system/shipping.service
@@ -540,7 +540,7 @@ ssh <MYSQL-SERVER>
 firewall-cmd --list-ports | grep 3306
 
 # 5. Reload schema if needed
-mysql -h <MYSQL-IP> -u root -pCloudKart@1990 < /app/schema/shipping.sql
+mysql -h <MYSQL-IP> -u root -pskillupworks@1990 < /app/schema/shipping.sql
 
 # 6. Restart shipping service
 systemctl restart shipping
@@ -589,21 +589,21 @@ package com.instana.robotshop.shipping does not exist
 
 ```bash
 # Create correct directory structure
-mkdir -p /app/src/main/java/com/cloudkart/shipping
+mkdir -p /app/src/main/java/com/skillupworks/shipping
 
 # Move files
 mv /app/src/main/java/com/instana/robotshop/shipping/*.java \
-   /app/src/main/java/com/cloudkart/shipping/
+   /app/src/main/java/com/skillupworks/shipping/
 
 # Remove old directory
 rm -rf /app/src/main/java/com/instana
 
 # Update package declarations
-find /app/src/main/java/com/cloudkart/shipping -name "*.java" \
-  -exec sed -i 's/package com.instana.robotshop.shipping;/package com.cloudkart.shipping;/g' {} \;
+find /app/src/main/java/com/skillupworks/shipping -name "*.java" \
+  -exec sed -i 's/package com.instana.robotshop.shipping;/package com.skillupworks.shipping;/g' {} \;
 
 # Verify
-head -5 /app/src/main/java/com/cloudkart/shipping/Controller.java
+head -5 /app/src/main/java/com/skillupworks/shipping/Controller.java
 
 # Rebuild
 mvn clean package -DskipTests
@@ -622,10 +622,10 @@ cityRepo.findByName() incompatible types
 ```bash
 # Add .orElse(null) to Optional return types
 sed -i '73s/cityRepo\.findByName(\([^)]*\))/cityRepo.findByName(\1).orElse(null)/' \
-  /app/src/main/java/com/cloudkart/shipping/Controller.java
+  /app/src/main/java/com/skillupworks/shipping/Controller.java
 
 sed -i '73s/cityRepo\.findById(\([^)]*\))/cityRepo.findById(\1).orElse(null)/' \
-  /app/src/main/java/com/cloudkart/shipping/Controller.java
+  /app/src/main/java/com/skillupworks/shipping/Controller.java
 
 # Rebuild
 mvn clean package -DskipTests
@@ -647,10 +647,10 @@ mysql --version
 
 # MySQL 8.4 doesn't support old GRANT syntax
 # Fix the schema file:
-sed -i "26s/.*/CREATE USER IF NOT EXISTS 'shipping'@'%' IDENTIFIED BY 'CloudKart@1990';\nGRANT ALL PRIVILEGES ON cities.* TO 'shipping'@'%';\nFLUSH PRIVILEGES;/" /app/schema/shipping.sql
+sed -i "26s/.*/CREATE USER IF NOT EXISTS 'shipping'@'%' IDENTIFIED BY 'skillupworks@1990';\nGRANT ALL PRIVILEGES ON cities.* TO 'shipping'@'%';\nFLUSH PRIVILEGES;/" /app/schema/shipping.sql
 
 # Reload schema
-mysql -h <MYSQL-IP> -u root -pCloudKart@1990 < /app/schema/shipping.sql
+mysql -h <MYSQL-IP> -u root -pskillupworks@1990 < /app/schema/shipping.sql
 ```
 
 ### Issue: Port Not Listening
@@ -890,8 +890,8 @@ mvn clean package -DskipTests
 mv target/shipping-1.0.jar shipping.jar
 
 # Database Verification
-mysql -h <MYSQL-IP> -u root -pCloudKart@1990 -e "USE cities; SELECT COUNT(*) FROM cities;"
-mysql -h <MYSQL-IP> -u root -pCloudKart@1990 -e "USE cities; SELECT * FROM cities LIMIT 5;"
+mysql -h <MYSQL-IP> -u root -pskillupworks@1990 -e "USE cities; SELECT COUNT(*) FROM cities;"
+mysql -h <MYSQL-IP> -u root -pskillupworks@1990 -e "USE cities; SELECT * FROM cities LIMIT 5;"
 ```
 
 ## Performance Optimization
@@ -917,7 +917,7 @@ Spring Boot automatically configures connection pooling. Default settings are us
 ## Security Best Practices
 
 1. **Database User**: Create dedicated `shipping` user (already done in schema)
-2. **Credentials**: Use strong passwords (not CloudKart@1990 in production)
+2. **Credentials**: Use strong passwords (not skillupworks@1990 in production)
 3. **Firewall**: Only allow shipping port from application servers
 4. **HTTPS**: Use HTTPS in production
 5. **Actuator Security**: Restrict `/actuator` endpoints in production
@@ -942,6 +942,6 @@ You have successfully:
 ✅ Verified health, count, cities, and calc APIs  
 ✅ Configured Spring Boot application
 
-The Shipping Service is now ready to calculate shipping costs for CloudKart.
+The Shipping Service is now ready to calculate shipping costs for skillupworks.
 
 For issues or questions, refer to the [Troubleshooting Guide](#troubleshooting).
