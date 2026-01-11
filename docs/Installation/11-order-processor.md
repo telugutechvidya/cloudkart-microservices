@@ -100,7 +100,7 @@ chown skillupworks:skillupworks /var/log/skillupworks
 ```bash
 # Download from S3
 curl -o /tmp/skillupworks-order-processor.zip \
-  https://myartifacts-telugutechvidya.s3.us-east-1.amazonaws.com/skillupworks-order-processor.zip
+  https://skillupworks.s3.us-east-1.amazonaws.com/skillupworks-order-processor.zip
 
 # Navigate to app directory
 cd /app
