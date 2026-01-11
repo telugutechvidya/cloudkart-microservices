@@ -76,6 +76,8 @@ EOF
 ```bash
 # Install MongoDB packages
 dnf install mongodb-org -y
+if we get any gpg key error ue # sudo dnf install -y mongodb-org --nogpgcheck
+
 ```
 
 **This installs:**
