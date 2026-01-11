@@ -1,8 +1,8 @@
 # 09 - RabbitMQ Setup
 
-RabbitMQ is a message broker used for asynchronous communication between CloudKart services. It handles order processing, payment notifications, and other event-driven workflows.
+RabbitMQ is a message broker used for asynchronous communication between skillupworks services. It handles order processing, payment notifications, and other event-driven workflows.
 
-This guide covers RabbitMQ installation, user creation, and configuration for CloudKart services.
+This guide covers RabbitMQ installation, user creation, and configuration for skillupworks services.
 
 ## Table of Contents
 
@@ -34,7 +34,7 @@ Payment Service (8084)
     └── Publishes payment events
          ↓
 RabbitMQ (5672)
-    ├── Exchange: cloudkart
+    ├── Exchange: skillupworks
     └── Queue: order-processing
          ↓
          └── Consumed by
@@ -124,14 +124,14 @@ systemctl status rabbitmq-server
 
 ## Configuration
 
-### 1. Create CloudKart Application User
+### 1. Create skillupworks Application User
 
 ```bash
-# Create user for CloudKart services
-rabbitmqctl add_user cloudkart CloudKart@123
+# Create user for skillupworks services
+rabbitmqctl add_user skillupworks skillupworks@123
 
 # Grant full permissions on default vhost (/)
-rabbitmqctl set_permissions -p / cloudkart ".*" ".*" ".*"
+rabbitmqctl set_permissions -p / skillupworks ".*" ".*" ".*"
 
 # Verify user was created
 rabbitmqctl list_users
@@ -142,7 +142,7 @@ rabbitmqctl list_users
 ```
 Listing users ...
 user    tags
-cloudkart       []
+skillupworks       []
 guest   [administrator]
 ```
 
@@ -215,7 +215,7 @@ rabbitmqctl status
 rabbitmqctl list_users
 
 # Expected:
-# cloudkart []
+# skillupworks []
 # admin [administrator]
 # guest [administrator]
 ```
@@ -287,13 +287,13 @@ telnet <RABBITMQ-IP> 5672
 
 ```bash
 # AMQP URL format
-RABBITMQ_URL=amqp://cloudkart:CloudKart@123@<RABBITMQ-IP>:5672/
+RABBITMQ_URL=amqp://skillupworks:skillupworks@123@<RABBITMQ-IP>:5672/
 
 # Or individual parameters
 RABBITMQ_HOST=<RABBITMQ-IP>
 RABBITMQ_PORT=5672
-RABBITMQ_USER=cloudkart
-RABBITMQ_PASSWORD=CloudKart@123
+RABBITMQ_USER=skillupworks
+RABBITMQ_PASSWORD=skillupworks@123
 RABBITMQ_VHOST=/
 ```
 
@@ -301,7 +301,7 @@ RABBITMQ_VHOST=/
 
 ```bash
 # AMQP URL format
-RABBITMQ_URL=amqp://cloudkart:CloudKart@123@<RABBITMQ-IP>:5672/
+RABBITMQ_URL=amqp://skillupworks:skillupworks@123@<RABBITMQ-IP>:5672/
 ```
 
 ### For Java Services (if needed)
@@ -310,8 +310,8 @@ RABBITMQ_URL=amqp://cloudkart:CloudKart@123@<RABBITMQ-IP>:5672/
 # Individual parameters
 RABBITMQ_HOST=<RABBITMQ-IP>
 RABBITMQ_PORT=5672
-RABBITMQ_USER=cloudkart
-RABBITMQ_PASSWORD=CloudKart@123
+RABBITMQ_USER=skillupworks
+RABBITMQ_PASSWORD=skillupworks@123
 ```
 
 ## Troubleshooting
@@ -381,7 +381,7 @@ systemctl restart rabbitmq-server
 **Symptoms:**
 
 ```
-Access refused for user 'cloudkart'
+Access refused for user 'skillupworks'
 ```
 
 **Solution:**
@@ -391,10 +391,10 @@ Access refused for user 'cloudkart'
 rabbitmqctl list_users
 
 # 2. If user missing, create it
-rabbitmqctl add_user cloudkart CloudKart@123
+rabbitmqctl add_user skillupworks skillupworks@123
 
 # 3. Grant permissions
-rabbitmqctl set_permissions -p / cloudkart ".*" ".*" ".*"
+rabbitmqctl set_permissions -p / skillupworks ".*" ".*" ".*"
 
 # 4. Verify permissions
 rabbitmqctl list_permissions -p /
@@ -584,7 +584,7 @@ Access: `http://<RABBITMQ-IP>:15672`
 
 2. **Create Exchange:**
    - Admin → Exchanges → Add new exchange
-   - Name: `cloudkart`
+   - Name: `skillupworks`
    - Type: `direct` or `topic`
 
 3. **View Messages:**
@@ -602,7 +602,7 @@ rabbitmqctl delete_user guest
 
 2. **Use Strong Passwords:**
    - Change default passwords in production
-   - Use complex passwords (not CloudKart@123)
+   - Use complex passwords (not skillupworks@123)
 
 3. **Limit Permissions:**
    - Grant only required permissions per service
@@ -675,7 +675,7 @@ After RabbitMQ is running:
 ✅ Install Payment Service → `10-payment-service.md`  
 ✅ Install Order Processor → `11-order-processor.md`
 
-Both services will connect to RabbitMQ using the `cloudkart` user credentials.
+Both services will connect to RabbitMQ using the `skillupworks` user credentials.
 
 ## Summary
 
@@ -683,13 +683,13 @@ You have successfully:
 
 ✅ Installed Erlang runtime  
 ✅ Installed RabbitMQ Server  
-✅ Created cloudkart user (CloudKart@123)  
+✅ Created skillupworks user (skillupworks@123)  
 ✅ Created admin user for Management UI (Admin@123)  
 ✅ Enabled Management UI plugin  
 ✅ Configured firewall for ports 5672 and 15672  
 ✅ Verified service is running  
 
-RabbitMQ is now ready to handle message queuing for CloudKart services.
+RabbitMQ is now ready to handle message queuing for skillupworks services.
 
 For issues or questions, refer to the [Troubleshooting Guide](#troubleshooting).
 
@@ -700,10 +700,10 @@ For issues or questions, refer to the [Troubleshooting Guide](#troubleshooting).
 **AMQP Connection (for applications):**
 - Host: `<RABBITMQ-IP>`
 - Port: `5672`
-- Username: `cloudkart`
-- Password: `CloudKart@123`
+- Username: `skillupworks`
+- Password: `skillupworks@123`
 - VHost: `/`
-- URL: `amqp://cloudkart:CloudKart@123@<RABBITMQ-IP>:5672/`
+- URL: `amqp://skillupworks:skillupworks@123@<RABBITMQ-IP>:5672/`
 
 **Management UI:**
 - URL: `http://<RABBITMQ-IP>:15672`
