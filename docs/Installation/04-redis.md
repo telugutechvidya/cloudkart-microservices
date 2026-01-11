@@ -133,6 +133,7 @@ vim /etc/redis.conf
 vim /etc/redis/redis.conf
 ```
 
+
 ---
 
 #### Update Listen Address
@@ -166,7 +167,21 @@ grep "^bind" /etc/redis/redis.conf
 ```
 
 ---
+If Redis is on a separate server, you must configure it to accept external connections:
 
+1. Edit Redis configuration:
+```bash
+   sudo nano /etc/redis/redis.conf
+```
+
+2. Change these settings:
+```conf
+   # Allow connections from any IP
+   bind 0.0.0.0
+   
+   # Disable protected mode (or set password)
+   protected-mode no
+```
 ### Restart Redis
 
 ```bash
