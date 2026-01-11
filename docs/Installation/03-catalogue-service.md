@@ -1,6 +1,6 @@
 # 03 - Catalogue Service
 
-The **Catalogue Service** is a Node.js microservice that provides product data for the CloudKart application. It manages product information including SKUs, names, descriptions, prices, and categories.
+The **Catalogue Service** is a Node.js microservice that provides product data for the skillupworks application. It manages product information including SKUs, names, descriptions, prices, and categories.
 
 This service stores all product data in **MongoDB** and exposes REST APIs for the frontend to browse products and categories.
 
@@ -83,12 +83,12 @@ v18.x.x
 ### 2. Create Application User
 
 ```bash
-# Create cloudkart user for running services
-useradd cloudkart
+# Create skillupworks user for running services
+useradd skillupworks
 
 # Create application directory
 mkdir -p /app
-chown cloudkart:cloudkart /app
+chown skillupworks:skillupworks /app
 ```
 
 ---
@@ -97,8 +97,8 @@ chown cloudkart:cloudkart /app
 
 ```bash
 # Download from S3
-curl -o /tmp/cloudkart-catalogue.zip \
-  https://myartifacts-telugutechvidya.s3.us-east-1.amazonaws.com/cloudkart-catalogue.zip
+curl -o /tmp/skillupworks-catalogue.zip \
+  https://skillupworks.s3.us-east-1.amazonaws.com/skillupworks-catalogue.zip
 
 # Navigate to app directory
 cd /app
@@ -107,10 +107,10 @@ cd /app
 rm -rf /app/*
 
 # Extract the application
-unzip /tmp/cloudkart-catalogue.zip
+unzip /tmp/skillupworks-catalogue.zip
 
 # Set ownership
-chown -R cloudkart:cloudkart /app
+chown -R skillupworks:skillupworks /app
 
 # Verify files
 ls -la /app
@@ -133,8 +133,8 @@ ls -la /app
 # Navigate to app directory
 cd /app
 
-# Install dependencies as cloudkart user
-sudo -u cloudkart npm install
+# Install dependencies as skillupworks user
+sudo -u skillupworks npm install
 
 # Verify installation
 npm list --depth=0
@@ -161,11 +161,11 @@ vim /etc/systemd/system/catalogue.service
 
 ```ini
 [Unit]
-Description=CloudKart Catalogue Service
+Description=skillupworks Catalogue Service
 After=network.target
 
 [Service]
-User=cloudkart
+User=skillupworks
 WorkingDirectory=/app
 
 # Environment Variables
@@ -225,7 +225,7 @@ systemctl status catalogue
 
 **Expected output:**
 ```
-● catalogue.service - CloudKart Catalogue Service
+● catalogue.service - skillupworks Catalogue Service
    Loaded: loaded (/etc/systemd/system/catalogue.service; enabled)
    Active: active (running)
 ```
@@ -416,7 +416,7 @@ cat /etc/systemd/system/catalogue.service | grep MONGO_URL
 
 # 4. Missing npm packages
 cd /app
-sudo -u cloudkart npm install
+sudo -u skillupworks npm install
 
 # Restart service
 systemctl restart catalogue
