@@ -1,6 +1,6 @@
 # 01 - Frontend Setup
 
-The frontend in **CloudKart** serves the web content using **Nginx** as the web server and reverse proxy. It provides the web UI for the CloudKart e-commerce application including product browsing, cart management, checkout, and order processing.
+The frontend in **skillupworks** serves the web content using **Nginx** as the web server and reverse proxy. It provides the web UI for the skillupworks e-commerce application including product browsing, cart management, checkout, and order processing.
 
 This frontend consists of **static content** (HTML, CSS, JavaScript with AngularJS), so we only need Nginx to serve the files and proxy API requests to backend microservices.
 
@@ -122,7 +122,7 @@ You should see the **default Nginx welcome page**.
 ### 5. Remove Default Nginx Content
 
 ```bash
-# CloudKart UI will live in /usr/share/nginx/html
+# skillupworks UI will live in /usr/share/nginx/html
 # Remove default content
 rm -rf /usr/share/nginx/html/*
 ```
@@ -134,9 +134,9 @@ rm -rf /usr/share/nginx/html/*
 On the frontend server:
 
 ```bash
-# Download the CloudKart frontend ZIP from S3
-curl -o /tmp/cloudkart-frontend.zip \
-  https://myartifacts-telugutechvidya.s3.us-east-1.amazonaws.com/cloudkart-frontend.zip
+# Download the skillupworks frontend ZIP from S3
+curl -o /tmp/skillupworks-frontend.zip \
+  https://myartifacts-telugutechvidya.s3.us-east-1.amazonaws.com/skillupworks-frontend.zip
 ```
 
 > 🔁 **Note:** If using a different region, adjust the URL:
@@ -152,7 +152,7 @@ curl -o /tmp/cloudkart-frontend.zip \
 cd /usr/share/nginx/html
 
 # Extract the ZIP file
-unzip /tmp/cloudkart-frontend.zip
+unzip /tmp/skillupworks-frontend.zip
 
 # Verify files were extracted
 ls -la
@@ -182,7 +182,7 @@ Open your browser again:
 http://<YOUR-SERVER-PUBLIC-IP>
 ```
 
-You should now see the **CloudKart landing page** with product categories.
+You should now see the **skillupworks landing page** with product categories.
 
 ---
 
@@ -190,7 +190,7 @@ You should now see the **CloudKart landing page** with product categories.
 
 ### Create Nginx Reverse Proxy Configuration
 
-Create the CloudKart configuration file:
+Create the skillupworks configuration file:
 
 ```bash
 # Create/edit the configuration file
@@ -247,7 +247,7 @@ server {
         add_header Access-Control-Allow-Origin *;
         add_header Access-Control-Allow-Headers "X-Session-Id, Content-Type";
 
-        # Forward CloudKart session ID header
+        # Forward skillupworks session ID header
         proxy_set_header X-Session-Id $http_x_session_id;
 
         # Fix: Pass content type/length to prevent JSON parsing issues
@@ -359,7 +359,7 @@ http://<YOUR-SERVER-PUBLIC-IP>
 ```
 
 **You should see:**
-- ✅ CloudKart landing page with product categories
+- ✅ skillupworks landing page with product categories
 - ✅ Navigation menu (Login, Cart, etc.)
 - ✅ Product listings
 
@@ -554,7 +554,7 @@ After the frontend is set up:
 
 You have successfully:
 - ✅ Installed and configured Nginx
-- ✅ Deployed CloudKart frontend
+- ✅ Deployed skillupworks frontend
 - ✅ Configured reverse proxy for backend APIs
 - ✅ Tested frontend in browser
 
