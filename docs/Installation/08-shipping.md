@@ -273,7 +273,7 @@ Environment=DB_PASS=skillupworks@1990
 Environment=SHIPPING_PORT=8086
 
 # Java Startup
-ExecStart=/usr/bin/java -jar /app/shipping.jar
+ExecStart=/usr/bin/java -Djdk.tls.client.protocols=TLSv1.2 -jar /app/shipping.jar
 
 # Restart Policies
 Restart=always
